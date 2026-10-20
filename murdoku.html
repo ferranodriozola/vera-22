@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troba el Regal</title>
+    <!-- Utilitzem Tailwind per centrar i aplicar estils minimalistes ràpidament -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 h-screen w-screen flex items-center justify-center m-0 font-sans">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md relative overflow-hidden">
+        <!-- PANTALLA 1 -->
+        <div id="screen1" class="transition-opacity duration-500 flex flex-col items-center">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">A quina casella hi ha el regal?</h1>
+            
+            <input 
+                type="text" 
+                id="answerInput" 
+                class="w-full text-center text-xl p-3 mb-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 outline-none transition-colors"
+                autocomplete="off"
+            >
+            
+            <!-- Missatge d'error ocult per defecte usant opacity -->
+            <p id="errorMsg" class="text-red-500 text-sm font-medium mb-4 h-5 opacity-0 transition-opacity duration-300">
+                Resposta incorrecta, torna-ho a provar.
+            </p>
+
+            <button id="checkBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-md hover:shadow-lg active:scale-95 transform duration-150">
+                Comprova
+            </button>
+        </div>
+
+        <!-- PANTALLA 2 (Oculta per defecte) -->
+        <div id="screen2" class="hidden flex-col items-center text-center transition-opacity duration-500">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Molt bé!</h2>
+            <p class="text-gray-600 mb-8 text-lg">Ja vindrà...</p>
+            
+            <button id="restartBtn" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-xl transition-colors">
+                Tornar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURACIÓ ---
+            // Canvia aquest text per definir la resposta correcta.
+            const RESPOSTA_CORRECTA = 'A1'; 
+            // --------------------
+
+            const screen1 = document.getElementById('screen1');
+            const screen2 = document.getElementById('screen2');
+            const input = document.getElementById('answerInput');
+            const checkBtn = document.getElementById('checkBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const restartBtn = document.getElementById('restartBtn');
+
+            // Assegurem que el cursor estigui a l'input només carregar la pàgina
+            input.focus();
+
+            // Funció per validar la resposta
+            function comprovarResposta() {
+                // Netegem els espais sobrants i ho passem a majúscules per comparar sense importar com s'hagi escrit
+                const respostaUsuari = input.value.trim().toUpperCase();
+                
+                if (respostaUsuari === RESPOSTA_CORRECTA.toUpperCase()) {
+                    // Resposta correcta: amaguem error si hi era i fem el canvi de pantalla
+                    errorMsg.classList.add('opacity-0');
+                    
+                    screen1.classList.add('hidden');
+                    
+                    // Mostrem la pantalla 2
+                    screen2.classList.remove('hidden');
+                    screen2.classList.add('flex');
+                } else {
+                    // Resposta incorrecta: mostrem error i netegem el camp
+                    errorMsg.classList.remove('opacity-0');
+                    input.value = '';
+                    input.focus();
+                }
+            }
+
+            // Escoltem el clic al botó "Comprova"
+            checkBtn.addEventListener('click', comprovarResposta);
+
+            // També permetem prémer la tecla 'Enter' per comprovar
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    comprovarResposta();
+                }
+            });
+
+            // Amagar l'error automàticament quan l'usuari comença a escriure de nou
+            input.addEventListener('input', () => {
+                errorMsg.classList.add('opacity-0');
+            });
+
+            // Botó per tornar a començar
+            restartBtn.addEventListener('click', () => {
+                input.value = '';
+                errorMsg.classList.add('opacity-0');
+                
+                screen2.classList.add('hidden');
+                screen2.classList.remove('flex');
+                
+                screen1.classList.remove('hidden');
+                input.focus();
+            });
+        });
+    </script>
+</body>
+</html>
